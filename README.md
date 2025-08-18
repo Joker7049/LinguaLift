@@ -1,19 +1,33 @@
 # AI English Learning App  
 
-An **AI-powered English learning app** built with Kotlin Multiplatform.  
-This project is designed to make language learning smarter, more personalized, and more fun.  
+🚧 **Work in Progress** 🚧  
+This project is currently under active development. The app is still in its early stages, but here’s the vision for what it will become.  
 
-## ✨ Features  
-- **Context-Aware Vocabulary Builder** – paste a sentence, and AI extracts tricky words, explains them simply, and creates flashcards.  
-- **“Fix My English” Mode** – get corrections with explanations and alternative phrasing.  
-- **AI Speaking Buddy** – practice real-life scenarios like coffee shop orders, interviews, or casual chats.  
-- **Daily AI Micro-Tests** – fresh personalized exercises (fill-in-the-blank, translations, listening).  
-- **Progressive Simplification** – upload an article and see it rewritten from beginner to advanced levels.  
-- **Pronunciation Feedback** – get tips on stress, rhythm, and natural speech.  
-- **Personalized Tutor Memory** – AI tracks your weak points and adjusts lessons automatically.  
+## 📖 About the Project  
+An **AI-powered English learning app** built with **Kotlin Multiplatform**.  
+The goal is to make learning English more natural, personalized, and fun with AI features like vocabulary extraction, grammar correction, and real-time speaking practice.  
 
-## 🎯 Why this project?  
-I’m learning English myself and wanted a tool that feels **alive, personalized, and practical**.  
-This app is also my **portfolio project** to showcase Kotlin Multiplatform, Jetpack Compose, and AI integration.  
+## ✨ Planned Features  
+- **Context-Aware Vocabulary Builder** – paste a sentence, and AI explains tricky words + creates flashcards.  
+- **“Fix My English” Mode** – AI corrects grammar, explains mistakes, and suggests better alternatives.  
+- **AI Speaking Buddy** – practice conversations in real-life scenarios (coffee shop, job interview, etc).  
+- **Daily AI Micro-Tests** – fresh personalized practice exercises every day.  
+- **Progressive Simplification** – upload an article and see simplified versions from beginner to advanced.  
+- **Pronunciation Feedback** – guidance on stress, rhythm, and natural speech.  
+- **Personalized Tutor Memory** – AI adapts to your weak spots and helps you improve faster.  
 
----
+## 🛠️ Tech Stack  
+- **Kotlin Multiplatform (KMP)**  
+- **Jetpack Compose Multiplatform**  
+- **AI Integration (planned)**  
+
+## 📅 Project Status  
+- ✅ Repository created  
+- 🚧 Setting up base project  
+- ⏳ Features coming soon  
+
+## 🤝 Contributing  
+This is mainly a portfolio project, but feedback, ideas, and suggestions are always welcome!  
+
+## 📜 License  
+[MIT License](./LICENSE)  
