@@ -1,16 +1,33 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# AI English Learning App  
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+🚧 **Work in Progress** 🚧  
+This project is currently under active development. The app is still in its early stages, but here’s the vision for what it will become.  
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## 📖 About the Project  
+An **AI-powered English learning app** built with **Kotlin Multiplatform**.  
+The goal is to make learning English more natural, personalized, and fun with AI features like vocabulary extraction, grammar correction, and real-time speaking practice.  
 
+## ✨ Planned Features  
+- **Context-Aware Vocabulary Builder** – paste a sentence, and AI explains tricky words + creates flashcards.  
+- **“Fix My English” Mode** – AI corrects grammar, explains mistakes, and suggests better alternatives.  
+- **AI Speaking Buddy** – practice conversations in real-life scenarios (coffee shop, job interview, etc).  
+- **Daily AI Micro-Tests** – fresh personalized practice exercises every day.  
+- **Progressive Simplification** – upload an article and see simplified versions from beginner to advanced.  
+- **Pronunciation Feedback** – guidance on stress, rhythm, and natural speech.  
+- **Personalized Tutor Memory** – AI adapts to your weak spots and helps you improve faster.  
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## 🛠️ Tech Stack  
+- **Kotlin Multiplatform (KMP)**  
+- **Jetpack Compose Multiplatform**  
+- **AI Integration (planned)**  
+
+## 📅 Project Status  
+- ✅ Repository created  
+- 🚧 Setting up base project  
+- ⏳ Features coming soon  
+
+## 🤝 Contributing  
+This is mainly a portfolio project, but feedback, ideas, and suggestions are always welcome!  
+
+## 📜 License  
+[MIT License](./LICENSE)  
