@@ -14,7 +14,7 @@ class SimplifyViewModel(): ViewModel() {
 
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.0-flash",
-        apiKey = BuildConfig.GEMINI_API_KEY
+        apiKey = getGeminiApiKey()
     )
 
     fun onTextChange(text: String) {
