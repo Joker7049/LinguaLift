@@ -1,34 +1,29 @@
 package org.example.project
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
+import org.example.project.ui.theme.AppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-import lingualift.composeapp.generated.resources.Res
-import lingualift.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        val viewModel = remember { SimplifyViewModel()  }
+    AppTheme {
+        val viewModel = remember { SimplifyViewModel() }
         val uiState by viewModel.uiState.collectAsState()
 
         Column(modifier = Modifier.padding(16.dp)) {
@@ -40,18 +35,17 @@ fun App() {
                 onClick = viewModel::simplifyText,
                 isLoading = uiState.isLoading
             )
-            if (uiState.isLoading){
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-            }else if (uiState.error != null){
-                Text(text =  "Error: ${uiState.error}")
-            }else {
+            } else if (uiState.error != null) {
+                Text(text = "Error: ${uiState.error}")
+            } else {
                 SimplifiedText(text = uiState.simplifiedText)
             }
         }
     }
-
 }
 
 @Composable
@@ -76,12 +70,12 @@ fun SimplifyButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         enabled = !isLoading
     ) {
-        if (isLoading){
+        if (isLoading) {
             CircularProgressIndicator()
-        }else {
+        } else {
             Text("Simplify")
         }
     }
