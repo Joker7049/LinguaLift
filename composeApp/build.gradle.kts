@@ -49,6 +49,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             // Gemini API
             implementation(libs.generativeai.google)
+            // Icons
+            //implementation(libs.androidx.material.icons.extended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
