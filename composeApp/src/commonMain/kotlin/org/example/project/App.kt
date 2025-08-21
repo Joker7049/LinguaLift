@@ -68,6 +68,14 @@ fun App() {
                             navController.navigate(Screen.FixMyEnglishScreen.route)
                         }
                     )
+                    NavigationDrawerItem(
+                        label = { Text(text = "Vocabulary Builder") },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            navController.navigate(Screen.VocabularyBuilderScreen.route)
+                        }
+                    )
                 }
             }
         ){
@@ -106,7 +114,10 @@ fun App() {
                     composable(Screen.FixMyEnglishScreen.route) {
                         FixMyEnglishScreen()
                     }
-
+                    composable(Screen.VocabularyBuilderScreen.route) {
+                        Text("VocabularyBuilderScreen")
+                        //TODO: Add VocabularyBuilderScreen
+                    }
                 }
 
 
