@@ -19,7 +19,6 @@ import org.example.project.VocabularyViewModel
 import org.example.project.VocabularyWord
 import org.example.project.database.getDatabase
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SavedWordsScreen(
     modifier: Modifier = Modifier
@@ -29,26 +28,30 @@ fun SavedWordsScreen(
     val viewModel = remember { VocabularyViewModel(vocabularyQueries) }
     val savedWords by viewModel.savedWords.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Saved Vocabulary") }
-            )
-        }
-    ) { paddingValues ->
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Text(
+            text = "Saved Vocabulary",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
         if (savedWords.isEmpty()) {
             Box(
-                modifier = modifier.fillMaxSize().padding(paddingValues),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text("You haven't saved any words yet.")
             }
         } else {
             LazyColumn(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
@@ -76,13 +79,12 @@ fun SavedWordCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = vocabularyWord.word,
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(

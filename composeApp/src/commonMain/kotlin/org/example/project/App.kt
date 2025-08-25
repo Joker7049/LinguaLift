@@ -30,6 +30,19 @@ import org.example.project.ui.FixMyEnglishScreen
 import org.example.project.ui.SavedWordsScreen
 import org.example.project.ui.SimplificationScreen
 import org.example.project.ui.VocabularyBuilderScreen
+import org.example.project.ui.HomeScreen
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LibraryBooks
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,52 +53,44 @@ fun App() {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
+        val screens = listOf(
+            Screen.HomeScreen,
+            Screen.SimplificationScreen,
+            Screen.FixMyEnglishScreen,
+            Screen.VocabularyBuilderScreen,
+            Screen.SavedWordsScreen
+        )
+        var selectedScreen by remember { mutableStateOf(screens[0]) }
+
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet {
-                    Text(text = "LinguaLift", modifier = Modifier.padding(16.dp))
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Translate,
+                            contentDescription = "LinguaLift Logo",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "LinguaLift",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
                     Divider()
-                    NavigationDrawerItem(
-                        label = { Text(text = "Home") },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(Screen.HomeScreen.route)
-                        }
-                    )
-                    NavigationDrawerItem(
-                        label = { Text(text = "Simplify Text") },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(Screen.SimplificationScreen.route)
-                        }
-                    )
-                    NavigationDrawerItem(
-                        label = { Text(text = "Fix My English") },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(Screen.FixMyEnglishScreen.route)
-                        }
-                    )
-                    NavigationDrawerItem(
-                        label = { Text(text = "Vocabulary Builder") },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(Screen.VocabularyBuilderScreen.route)
-                        }
-                    )
-                    NavigationDrawerItem(
-                        label = { Text(text = "Saved Words") },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(Screen.SavedWordsScreen.route)
-                        }
-                    )
+                    screens.forEach { screen ->
+                        NavigationDrawerItem(
+                            label = { Text(text = screen.title) },
+                            icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
+                            selected = screen == selectedScreen,
+                            onClick = {
+                                selectedScreen = screen
+                                scope.launch { drawerState.close() }
+                                navController.navigate(screen.route)
+                            }
+                        )
+                    }
                 }
             }
         ){
@@ -116,7 +121,7 @@ fun App() {
                     modifier = Modifier.padding(paddingValues)
                 ) {
                     composable(Screen.HomeScreen.route) {
-                        Text("HomeScreen")
+                        HomeScreen()
                     }
                     composable(Screen.SimplificationScreen.route) {
                         SimplificationScreen()

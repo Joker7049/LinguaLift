@@ -35,7 +35,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.project.SimplifyViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimplificationScreen(
     modifier: Modifier = Modifier,
@@ -50,21 +49,18 @@ fun SimplificationScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Simplify Text",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
         OutlinedTextField(
             value = uiState.textToSimplify,
             onValueChange = viewModel::onTextChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .onKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && !event.isShiftPressed) {
-                        viewModel.simplifyText()
-                        true
-                    } else {
-                        false
-                    }
-                },
+                .height(150.dp),
             label = { Text("Enter text to simplify") },
             placeholder = { Text("e.g., The feline was quiescent.") },
             trailingIcon = {
@@ -82,15 +78,14 @@ fun SimplificationScreen(
                 }
             },
             shape = MaterialTheme.shapes.large,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { viewModel.simplifyText() })
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(
+        Button(
             onClick = viewModel::simplifyText,
             enabled = uiState.textToSimplify.isNotBlank() && !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
@@ -143,13 +138,12 @@ fun SimplificationScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateContentSize(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = "Simplified Version:",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(

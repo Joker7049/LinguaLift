@@ -46,6 +46,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import org.example.project.FixMyEnglishViewModel
 
+import androidx.compose.material3.Button
+
 @Composable
 fun FixMyEnglishScreen(
     modifier: Modifier = Modifier,
@@ -60,33 +62,32 @@ fun FixMyEnglishScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = "Fix My English",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
         OutlinedTextField(
             value = uiState.textToCorrect,
             onValueChange = viewModel::onTextChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .onKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && !event.isShiftPressed) {
-                        viewModel.correctText()
-                        true
-                    } else {
-                        false
-                    }
-                },
+                .height(150.dp),
             label = { Text("Enter text to correct") },
             placeholder = { Text("e.g., I is happy") },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { viewModel.correctText() })
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(
+        Button(
             onClick = viewModel::correctText,
+            enabled = uiState.textToCorrect.isNotBlank() && !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
-                contentDescription = "Simplify",
+                contentDescription = "Correct My English",
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.size(8.dp))
@@ -126,7 +127,7 @@ fun FixMyEnglishScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateContentSize(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp)
@@ -134,7 +135,6 @@ fun FixMyEnglishScreen(
                             Text(
                                 text = "Corrected Version:",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
@@ -147,7 +147,6 @@ fun FixMyEnglishScreen(
                             Text(
                                 text = "Explanation:",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
@@ -160,7 +159,6 @@ fun FixMyEnglishScreen(
                             Text(
                                 text = "Alternatives:",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             targetState.alternatives.forEach { alternative ->
