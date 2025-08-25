@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -36,8 +38,11 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqlDelight.android.driver)
         }
         commonMain.dependencies {
+            implementation(libs.sqlDelight.runtime)
+            implementation(libs.sqlDelight.coroutines.extensions)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -48,10 +53,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.navigation.compose)
-            // Gemini API
             implementation(libs.generativeai.google)
-            // Icons
-            //implementation(libs.androidx.material.icons.extended)
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -59,6 +62,10 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.sqlDelight.jvm.driver)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqlDelight.native.driver)
         }
     }
 }
@@ -87,7 +94,7 @@ android {
 
         // Get the API key from local.properties
         val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY")
-        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+        buildConfigField("String", "GEMINI_API_KEY", "$geminiApiKey")
     }
     packaging {
         resources {
@@ -104,6 +111,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
 dependencies {
     debugImplementation(compose.uiTooling)
 }
@@ -118,4 +126,12 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+sqldelight {
+  databases {
+    create("AppDatabase") {
+      packageName.set("org.example.project.database")
+    }
+  }
 }

@@ -27,7 +27,9 @@ import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import org.example.project.navigation.Screen
 import org.example.project.ui.FixMyEnglishScreen
+import org.example.project.ui.SavedWordsScreen
 import org.example.project.ui.SimplificationScreen
+import org.example.project.ui.VocabularyBuilderScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +78,14 @@ fun App() {
                             navController.navigate(Screen.VocabularyBuilderScreen.route)
                         }
                     )
+                    NavigationDrawerItem(
+                        label = { Text(text = "Saved Words") },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            navController.navigate(Screen.SavedWordsScreen.route)
+                        }
+                    )
                 }
             }
         ){
@@ -114,9 +124,11 @@ fun App() {
                     composable(Screen.FixMyEnglishScreen.route) {
                         FixMyEnglishScreen()
                     }
-                    composable(Screen.VocabularyBuilderScreen.route) {
-                        Text("VocabularyBuilderScreen")
-                        //TODO: Add VocabularyBuilderScreen
+                    composable(Screen.VocabularyBuilderScreen.route){
+                        VocabularyBuilderScreen()
+                    }
+                    composable(Screen.SavedWordsScreen.route) {
+                        SavedWordsScreen()
                     }
                 }
 

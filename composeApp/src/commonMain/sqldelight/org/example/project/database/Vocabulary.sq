@@ -1,0 +1,23 @@
+
+CREATE TABLE vocabulary(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    word TEXT NOT NULL,
+    explanation TEXT NOT NULL,
+    persianEquivalent TEXT NOT NULL,
+    example TEXT NOT NULL
+);
+
+-- This is a comment in SQL
+
+   -- Query 1: Insert a new word
+   insertWord:
+   INSERT INTO vocabulary (word, explanation, persianEquivalent, example)
+   VALUES (?, ?, ?, ?);
+
+   -- Query 2: Get all saved words
+   getAllWords:
+   SELECT * FROM vocabulary;
+
+   -- Query 3: Delete a word by its ID
+   deleteWordById:
+   DELETE FROM vocabulary WHERE id = ?;
