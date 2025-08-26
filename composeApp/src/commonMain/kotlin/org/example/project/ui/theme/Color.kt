@@ -26,6 +26,9 @@ val md_theme_light_surfaceVariant = Color(0xFFE1E2EC)
 val md_theme_light_onSurfaceVariant = Color(0xFF44474F)
 val md_theme_light_outline = Color(0xFF74777F)
 
+val flashcard_gradient_start = Color(0xFFF5F5F5)
+val flashcard_gradient_end = Color(0xFFE0E0E0)
+
 // Dark Theme Colors
 val md_theme_dark_primary = Color(0xFFA8C7FF)
 val md_theme_dark_onPrimary = Color(0xFF00325B)
