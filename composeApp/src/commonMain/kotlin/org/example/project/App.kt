@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
+import org.example.project.database.getDatabase
 import org.example.project.navigation.Screen
 import org.example.project.ui.FixMyEnglishScreen
 import org.example.project.ui.SavedWordsScreen
@@ -39,6 +41,9 @@ fun App() {
         val navController = rememberNavController()
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
+
+        val vocabularyQueries = getDatabase().vocabularyQueries
+        val vocabularyViewModel = remember { VocabularyViewModel(vocabularyQueries) }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -125,10 +130,10 @@ fun App() {
                         FixMyEnglishScreen()
                     }
                     composable(Screen.VocabularyBuilderScreen.route){
-                        VocabularyBuilderScreen()
+                        VocabularyBuilderScreen(viewModel = vocabularyViewModel)
                     }
                     composable(Screen.SavedWordsScreen.route) {
-                        SavedWordsScreen()
+                        SavedWordsScreen(viewModel = vocabularyViewModel)
                     }
                 }
 

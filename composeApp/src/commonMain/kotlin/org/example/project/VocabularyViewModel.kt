@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -50,6 +51,9 @@ class VocabularyViewModel(private val vocabularyQueries: VocabularyQueries) : Vi
                         example = dbVocabulary.example
                     )
                 }
+            }
+            .onEach { words ->
+                println("[ViewModel] Saved words list updated. Count: ${words.size}")
             }
             .stateIn(
                 scope = viewModelScope,
@@ -99,12 +103,14 @@ class VocabularyViewModel(private val vocabularyQueries: VocabularyQueries) : Vi
 
     fun saveWord(word: VocabularyWord) {
         viewModelScope.launch(Dispatchers.Default) {
+            println("[ViewModel] Attempting to save word: ${word.word}")
             vocabularyQueries.insertWord(
                 word = word.word,
                 explanation = word.explanation,
                 persianEquivalent = word.persianEquivalent,
                 example = word.example
             )
+            println("[ViewModel] Finished saving word: ${word.word}")
         }
     }
 

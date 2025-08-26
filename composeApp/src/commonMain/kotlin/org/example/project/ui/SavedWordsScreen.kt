@@ -22,11 +22,11 @@ import org.example.project.database.getDatabase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SavedWordsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: VocabularyViewModel
 ) {
     // We use the same ViewModel, as it holds the logic for both extracting and managing words.
     val vocabularyQueries = getDatabase().vocabularyQueries
-    val viewModel = remember { VocabularyViewModel(vocabularyQueries) }
     val savedWords by viewModel.savedWords.collectAsState()
 
     Scaffold(

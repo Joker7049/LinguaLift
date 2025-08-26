@@ -46,10 +46,10 @@ import org.example.project.database.getDatabase
 
 @Composable
 fun VocabularyBuilderScreen(
-    modifier: Modifier = Modifier.Companion
+    modifier: Modifier = Modifier,
+    viewModel : VocabularyViewModel
 ) {
     val vocabularyQueries = getDatabase().vocabularyQueries
-    val viewModel = remember{ VocabularyViewModel(vocabularyQueries) }
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
@@ -117,7 +117,9 @@ fun VocabularyBuilderScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(targetState.extractedWords) { word ->
-                        VocabularyWordCard(vocabularyWord = word, onSaveClick = {viewModel.saveWord(word)})
+                        VocabularyWordCard(
+                            vocabularyWord = word,
+                            onSaveClick = { viewModel.saveWord(word) })
                     }
                 }
             }
