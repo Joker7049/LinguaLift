@@ -44,6 +44,8 @@ import org.example.project.VocabularyViewModel
 import org.example.project.VocabularyWord
 import org.example.project.database.getDatabase
 
+import androidx.compose.material3.Button
+
 @Composable
 fun VocabularyBuilderScreen(
     modifier: Modifier = Modifier,
@@ -55,25 +57,32 @@ fun VocabularyBuilderScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = "Vocabulary Builder",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
         OutlinedTextField(
             value = uiState.textToExtract,
             onValueChange = viewModel::onTextChange,
             label = { Text("Enter text to extract vocabulary from") },
             placeholder = { Text("e.g., The quick brown fox jumps over the lazy dog.") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = false,
-            minLines = 3
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(
+        Button(
             onClick = viewModel::extractWords,
+            enabled = uiState.textToExtract.isNotBlank() && !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
@@ -84,42 +93,47 @@ fun VocabularyBuilderScreen(
             Text("Extract Vocabulary")
         }
 
-    }
-    Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-    AnimatedContent(
-        targetState = uiState,
-        transitionSpec = {
-            fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
-        }
-    ) { targetState ->
-        when {
-            targetState.isLoading -> {
-                CircularProgressIndicator(modifier = Modifier.size(48.dp))
+        AnimatedContent(
+            targetState = uiState,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
             }
-
-            targetState.error != null -> {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                ) {
-                    Text(
-                        text = "Error: ${targetState.error}",
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
+        ) { targetState ->
+            when {
+                targetState.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(48.dp))
+                    }
                 }
-            }
 
-            targetState.extractedWords.isNotEmpty() -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(targetState.extractedWords) { word ->
-                        VocabularyWordCard(
-                            vocabularyWord = word,
-                            onSaveClick = { viewModel.saveWord(word) })
+                targetState.error != null -> {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    ) {
+                        Text(
+                            text = "Error: ${targetState.error}",
+                            modifier = Modifier.padding(16.dp),
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                }
+
+                targetState.extractedWords.isNotEmpty() -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(targetState.extractedWords) { word ->
+                            VocabularyWordCard(vocabularyWord = word, onSaveClick = { viewModel.saveWord(word) })
+                        }
                     }
                 }
             }
@@ -137,13 +151,12 @@ fun VocabularyWordCard(
         modifier = modifier
             .fillMaxWidth()
             .animateContentSize(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = vocabularyWord.word,
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -170,7 +183,7 @@ fun VocabularyWordCard(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                TextButton(onClick = onSaveClick) {
+                Button(onClick = onSaveClick) {
                     Text("Save")
                 }
             }
