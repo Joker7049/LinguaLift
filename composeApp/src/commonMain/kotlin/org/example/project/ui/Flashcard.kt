@@ -2,6 +2,7 @@ package org.example.project.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -42,34 +44,44 @@ fun Flashcard(
 ) {
     var isFlipped by remember { mutableStateOf(false) }
 
-    val rotationY by animateFloatAsState(
+    // 1. Rename the state variable to "rotation"
+    val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = 500),
+        label = "flashcardRotation"
     )
 
     Card(
         modifier = modifier
             .shadow(8.dp, RoundedCornerShape(16.dp))
             .graphicsLayer {
-                this.rotationY = rotationY
+                // 2. Use our "rotation" state variable here
+                this.rotationY = rotation
                 cameraDistance = 12 * density
             },
         shape = RoundedCornerShape(16.dp),
         onClick = { isFlipped = !isFlipped },
         colors = CardDefaults.cardColors(
-            containerColor = Brush.verticalGradient(
-                colors = listOf(
-                    flashcard_gradient_start,
-                    flashcard_gradient_end
-                )
-            )
+            containerColor = MaterialTheme.colorScheme.surfaceBright
         )
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (rotationY <= 90f) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf<Color>(
+                        flashcard_gradient_start,
+                        flashcard_gradient_end
+                    )
+                )
+            )
+        ) {
+            // 3. Use our "rotation" state variable for the check
+            if (rotation <= 90f) {
                 FlashcardFront(vocabularyWord)
             } else {
-                // Apply a second rotation to the back face to counter the parent's rotation
+                // 4. This line now works, because there is no conflict.
+                // It correctly sets the rotationY property of this specific graphicsLayer.
                 Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
                     FlashcardBack(vocabularyWord)
                 }
@@ -92,7 +104,6 @@ fun Flashcard(
         }
     }
 }
-
 @Composable
 fun FlashcardFront(vocabularyWord: VocabularyWord) {
     val (word, phonetic) = remember(vocabularyWord.word) {
