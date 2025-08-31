@@ -32,9 +32,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
+import org.example.project.data.ChatViewModel
 import org.example.project.database.getDatabase
 import org.example.project.navigation.Screen
 import org.example.project.quiz.QuizViewModel
+import org.example.project.ui.ChatScreen
 import org.example.project.ui.FixMyEnglishScreen
 import org.example.project.ui.HomeScreen
 import org.example.project.ui.QuizScreen
@@ -54,6 +56,7 @@ fun App() {
         val vocabularyQueries = getDatabase().vocabularyQueries
         val vocabularyViewModel = remember { VocabularyViewModel(vocabularyQueries) }
         val quizViewModel = remember { QuizViewModel(vocabularyQueries) }
+        val chatViewModel = remember { ChatViewModel() }
 
         val screens = listOf(
             Screen.HomeScreen,
@@ -61,7 +64,8 @@ fun App() {
             Screen.FixMyEnglishScreen,
             Screen.VocabularyBuilderScreen,
             Screen.SavedWordsScreen,
-            Screen.QuizScreen
+            Screen.QuizScreen,
+            Screen.ChatScreen
         )
         var selectedScreen by remember { mutableStateOf(screens[0]) }
 
@@ -140,6 +144,9 @@ fun App() {
                     }
                     composable(Screen.QuizScreen.route) {
                         QuizScreen(viewModel = quizViewModel)
+                    }
+                    composable(Screen.ChatScreen.route) {
+                        ChatScreen(viewModel = chatViewModel)
                     }
                 }
 
