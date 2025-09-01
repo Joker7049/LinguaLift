@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,8 +27,7 @@ import org.example.project.quiz.QuizViewModel
 
 @Composable
 fun QuizScreen(
-    viewModel: QuizViewModel,
-    modifier: Modifier = Modifier
+    viewModel: QuizViewModel, modifier: Modifier = Modifier
 ) {
     // 1. Run this block once when the screen first appears
     LaunchedEffect(Unit) {
@@ -39,21 +39,21 @@ fun QuizScreen(
 
     // 3. A simple layout to center our content
     Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         // 4. Show UI based on the current state
         when {
             uiState.isLoading -> {
                 CircularProgressIndicator()
             }
+
             uiState.error != null -> {
                 Text("Error: ${uiState.error}")
             }
+
             uiState.quiz != null -> {
                 QuizContent(
-                    uiState = uiState,
-                    viewModel = viewModel
+                    uiState = uiState, viewModel = viewModel
                 )
 
             }
@@ -63,9 +63,7 @@ fun QuizScreen(
 
 @Composable
 fun QuizContent(
-    uiState: QuizUiState,
-    viewModel: QuizViewModel,
-    modifier: Modifier = Modifier
+    uiState: QuizUiState, viewModel: QuizViewModel, modifier: Modifier = Modifier
 ) {
     val currentQuestion = uiState.quiz?.questions?.get(uiState.currentQuestionIndex)
 
@@ -78,16 +76,16 @@ fun QuizContent(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Quiz Finished!", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Your score: ${uiState.score} / ${uiState.quiz.questions.size}", style =
-                MaterialTheme.typography.titleLarge)
+            Text(
+                "Your score: ${uiState.score} / ${uiState.quiz.questions.size}",
+                style = MaterialTheme.typography.titleLarge
+            )
         }
         return
     }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Question Text
@@ -109,10 +107,24 @@ fun QuizContent(
             val buttonColors = if (uiState.isAnswerSubmitted) {
                 // After submission, color the buttons
                 when {
-                    option == currentQuestion.correctAnswer -> ButtonDefaults.buttonColors(containerColor =
-                        Color.Green.copy(alpha = 0.5f))
-                    isSelected -> ButtonDefaults.buttonColors(containerColor = Color.Red.copy(alpha = 0.5f))
-                    else -> ButtonDefaults.outlinedButtonColors()
+                    option == currentQuestion.correctAnswer -> {
+                        buttonColors(
+                            containerColor = Color.Green.copy(0.5f),
+                            disabledContainerColor = Color.Green.copy(0.5f)
+                        )
+                    }
+
+                    isSelected -> {
+                        ButtonDefaults.buttonColors(
+                            containerColor = Color.Red.copy(0.5f),
+                            disabledContainerColor = Color.Red.copy(0.5f)
+                        )
+                    }
+
+                    else -> //ButtonDefaults.outlinedButtonColors()
+                    {
+                        ButtonDefaults.buttonColors()
+                    }
                 }
             } else {
                 // Before submission, just highlight the selected one
@@ -138,8 +150,7 @@ fun QuizContent(
             }
         } else {
             Button(
-                onClick = { viewModel.submitAnswer() },
-                enabled = uiState.selectedAnswer != null
+                onClick = { viewModel.submitAnswer() }, enabled = uiState.selectedAnswer != null
             ) {
                 Text("Submit")
             }

@@ -26,15 +26,18 @@ class ChatViewModel(
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
-    private val generativeModel:
+    // 1. Define the model as a property of the class
+    private val generativeModel = GenerativeModel(
+        modelName = "gemini-2.0-flash",
+        apiKey = getGeminiApiKey(),
+        generationConfig = generationConfig {
+            temperature = 0.7f
+        }
+    )
+
     private val chat by lazy {
-        GenerativeModel(
-            modelName = "gemini-2.0-flash",
-            apiKey = getGeminiApiKey(),
-            generationConfig = generationConfig {
-                temperature = 0.7f
-            }
-        ).startChat(history = getInitialHistory())
+        // 2. Use the class property here
+        generativeModel.startChat(history = getInitialHistory())
     }
 
     private fun getInitialHistory(): List<dev.shreyaspatil.ai.client.generativeai.type.Content> {
@@ -44,7 +47,6 @@ class ChatViewModel(
             Keep your responses concise.
         """.trimIndent()
 
-        // 1. Load memory and words from the database
         val memorySummary = aiMemoryQueries.getMemory().executeAsOneOrNull() ?: "No summary yet."
         val randomWords = vocabularyQueries.getRandomWords().executeAsList()
         val wordListString = randomWords.joinToString(", ") { it.word }
@@ -57,7 +59,6 @@ class ChatViewModel(
             Please try to naturally use these words in the conversation: $wordListString
         """.trimIndent()
 
-        // 2. Construct the initial history
         return listOf(
             content(role = "user") { text(systemInstruction) },
             content(role = "model") { text("Understood. I will act as Gemi, a friendly English tutor.") },
@@ -93,6 +94,40 @@ class ChatViewModel(
                     messages = _uiState.value.messages.dropLast(1) + errorMessage,
                     isLoading = false
                 )
+            }
+        }
+    }
+
+    fun summarizeAndSaveMemory() {
+        viewModelScope.launch(Dispatchers.Default) {
+            if (uiState.value.messages.isEmpty()) return@launch // Don't save if there's no conversation
+
+            val chatHistory = uiState.value.messages.joinToString("\n") { 
+                if (it.isFromUser) "User: ${it.text}" else "Gemi: ${it.text}"
+            }
+            val oldMemory = aiMemoryQueries.getMemory().executeAsOneOrNull() ?: "No summary yet."
+
+            val prompt = """
+                You are an expert in memory consolidation. Read through this chat history and the user's old memory summary.
+                Create a new, single-paragraph summary of the user's key struggles, corrected mistakes, and learned concepts from the latest chat.
+                Combine this with the most important points from the old memory. The new summary should be concise and useful for another AI tutor to read to quickly understand the user's progress and weak points.
+
+                [OLD MEMORY SUMMARY]
+                $oldMemory
+
+                [LATEST CHAT HISTORY]
+                $chatHistory
+
+                Please provide only the new, updated single-paragraph summary.
+            """.trimIndent()
+
+            try {
+                // 3. Use the class property here too
+                val newSummary = generativeModel.generateContent(prompt).text ?: return@launch
+                aiMemoryQueries.updateMemory(newSummary)
+                println("[ViewModel] Memory updated successfully.")
+            } catch (e: Exception) {
+                println("[ViewModel] Error updating memory: ${e.message}")
             }
         }
     }

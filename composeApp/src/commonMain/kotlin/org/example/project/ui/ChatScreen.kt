@@ -6,13 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,18 +14,24 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.example.project.data.ChatMessage
 import org.example.project.data.ChatViewModel
-import kotlin.collections.emptyList
 
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    viewModel: ChatViewModel // Accept the ViewModel as a parameter
+    viewModel: ChatViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
     var text by remember { mutableStateOf("") }
+
+    // This effect will run when the user leaves the screen
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.summarizeAndSaveMemory()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -67,45 +67,14 @@ fun ChatScreen(
     }
 }
 
-@Composable
-fun ChatInputBar(
-    text: String,
-    onTextChanged: (String) -> Unit,
-    onSendClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = text, // Display the value we were given
-            onValueChange = onTextChanged, // Call the lambda when the text changes
-            modifier = Modifier.weight(1f),
-            placeholder = { Text("Type a message...") }
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        IconButton(onClick = onSendClick) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Send,
-                contentDescription = "Send message"
-            )
-        }
-    }
-}
+// MessageBubble and ChatInputBar composables remain the same
 
 @Composable
-fun MessageBubble(
-    message: ChatMessage,
-    modifier: Modifier = Modifier
-) {
+fun MessageBubble(message: ChatMessage, modifier: Modifier = Modifier) { 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        // Push user messages to the end, AI messages to the start
         horizontalArrangement = if (message.isFromUser) Arrangement.End else Arrangement.Start
     ) {
         Card(
@@ -124,6 +93,35 @@ fun MessageBubble(
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 }
+            )
+        }
+    }
+}
+
+@Composable
+fun ChatInputBar(
+    text: String,
+    onTextChanged: (String) -> Unit,
+    onSendClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = text,
+            onValueChange = onTextChanged,
+            modifier = Modifier.weight(1f),
+            placeholder = { Text("Type a message...") }
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        IconButton(onClick = onSendClick) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Send,
+                contentDescription = "Send message"
             )
         }
     }
