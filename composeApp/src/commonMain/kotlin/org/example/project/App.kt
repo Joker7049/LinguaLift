@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import org.example.project.data.ChatViewModel
 import org.example.project.database.getDatabase
+import org.example.project.database.AiMemoryQueries
 import org.example.project.navigation.Screen
 import org.example.project.quiz.QuizViewModel
 import org.example.project.ui.ChatScreen
@@ -56,7 +57,7 @@ fun App() {
         val vocabularyQueries = getDatabase().vocabularyQueries
         val vocabularyViewModel = remember { VocabularyViewModel(vocabularyQueries) }
         val quizViewModel = remember { QuizViewModel(vocabularyQueries) }
-        val chatViewModel = remember { ChatViewModel() }
+        val chatViewModel = remember { ChatViewModel(vocabularyQueries, getDatabase().aiMemoryQueries) }
 
         val screens = listOf(
             Screen.HomeScreen,

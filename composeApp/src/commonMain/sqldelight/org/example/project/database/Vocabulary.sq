@@ -1,5 +1,4 @@
-
-CREATE TABLE vocabulary(
+CREATE TABLE vocabulary (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     word TEXT NOT NULL,
     explanation TEXT NOT NULL,
@@ -7,17 +6,36 @@ CREATE TABLE vocabulary(
     example TEXT NOT NULL
 );
 
--- This is a comment in SQL
+CREATE TABLE ai_memory(
+    id INTEGER NOT NULL PRIMARY KEY,
+    summary TEXT NOT NULL
+);
 
-   -- Query 1: Insert a new word
-   insertWord:
-   INSERT INTO vocabulary (word, explanation, persianEquivalent, example)
-   VALUES (?, ?, ?, ?);
+-- === Vocabulary Queries ===
 
-   -- Query 2: Get all saved words
-   getAllWords:
-   SELECT * FROM vocabulary;
+insertWord:
+INSERT INTO vocabulary (word, explanation, persianEquivalent, example)
+VALUES (?, ?, ?, ?);
 
-   -- Query 3: Delete a word by its ID
-   deleteWordById:
-   DELETE FROM vocabulary WHERE id = ?;
+getAllWords:
+SELECT * FROM vocabulary;
+
+deleteWordById:
+DELETE FROM vocabulary WHERE id = ?;
+
+-- Get 10 random words from the vocabulary table
+getRandomWords:
+SELECT * FROM vocabulary ORDER BY RANDOM() LIMIT 10;
+
+
+-- === AI Memory Queries ===
+
+-- Get the memory summary. We assume it will always have id = 1
+getMemory:
+SELECT summary FROM ai_memory WHERE id = 1;
+
+-- Insert a new memory or replace the old one if it exists.
+-- We will always use id = 1 for our single memory entry.
+updateMemory:
+INSERT OR REPLACE INTO ai_memory (id, summary)
+VALUES (1, ?);
