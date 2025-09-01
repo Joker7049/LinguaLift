@@ -42,7 +42,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.sqlDelight.runtime)
-            implementation(libs.sqlDelight.coroutines.extensions)
+            implementation(libs.coroutines.extensions)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -94,7 +94,7 @@ android {
 
         // Get the API key from local.properties
         val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY")
-        buildConfigField("String", "GEMINI_API_KEY", "$geminiApiKey")
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
     packaging {
         resources {
