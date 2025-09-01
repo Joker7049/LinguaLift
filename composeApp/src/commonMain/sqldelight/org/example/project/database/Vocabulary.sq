@@ -1,5 +1,4 @@
-
-CREATE TABLE vocabulary(
+CREATE TABLE vocabulary (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     word TEXT NOT NULL,
     explanation TEXT NOT NULL,
@@ -7,17 +6,21 @@ CREATE TABLE vocabulary(
     example TEXT NOT NULL
 );
 
--- This is a comment in SQL
 
-   -- Query 1: Insert a new word
-   insertWord:
-   INSERT INTO vocabulary (word, explanation, persianEquivalent, example)
-   VALUES (?, ?, ?, ?);
+-- === Vocabulary Queries ===
 
-   -- Query 2: Get all saved words
-   getAllWords:
-   SELECT * FROM vocabulary;
+insertWord:
+INSERT INTO vocabulary (word, explanation, persianEquivalent, example)
+VALUES (?, ?, ?, ?);
 
-   -- Query 3: Delete a word by its ID
-   deleteWordById:
-   DELETE FROM vocabulary WHERE id = ?;
+getAllWords:
+SELECT * FROM vocabulary;
+
+deleteWordById:
+DELETE FROM vocabulary WHERE id = ?;
+
+-- Get 10 random words from the vocabulary table
+getRandomWords:
+SELECT * FROM vocabulary ORDER BY RANDOM() LIMIT 10;
+
+

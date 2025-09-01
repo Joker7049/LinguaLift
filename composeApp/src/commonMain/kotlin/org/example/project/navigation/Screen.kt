@@ -15,4 +15,5 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object VocabularyBuilderScreen : Screen("vocabulary_builder_screen", "Vocabulary Builder", Icons.Default.LibraryBooks)
     object SavedWordsScreen : Screen("saved_words_screen", "Saved Words", Icons.Default.Bookmark)
     object QuizScreen : Screen("quiz_screen", "Quiz", Icons.Default.Bookmark)
+    object ChatScreen : Screen("chat_screen", "Tutor Chat", Icons.Default.Bookmark)
 }
