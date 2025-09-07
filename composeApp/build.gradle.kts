@@ -35,6 +35,9 @@ kotlin {
     jvm()
     
     sourceSets {
+        val commonMain by getting {
+            resources.srcDirs("src/commonMain/composeResources")
+        }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -42,7 +45,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.sqlDelight.runtime)
-            implementation(libs.coroutines.extensions)
+            implementation(libs.sqlDelight.coroutines.extensions)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -55,6 +58,8 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(libs.generativeai.google)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.haze.materials)
+            implementation(libs.kamel.image.default)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

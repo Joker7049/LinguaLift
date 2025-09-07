@@ -2,40 +2,39 @@ package org.example.project.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.kamel.core.config.KamelConfig
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
+import io.kamel.image.config.svgDecoder
+import kotlinx.coroutines.launch
+import lingualift.composeapp.generated.resources.Res
+import lingualift.composeapp.generated.resources.branch_top_left
 import org.example.project.VocabularyWord
 import org.example.project.ui.theme.flashcard_gradient_end
 import org.example.project.ui.theme.flashcard_gradient_start
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun Flashcard(
     vocabularyWord: VocabularyWord,
@@ -44,79 +43,84 @@ fun Flashcard(
 ) {
     var isFlipped by remember { mutableStateOf(false) }
 
-    // 1. Rename the state variable to "rotation"
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
         animationSpec = tween(durationMillis = 500),
         label = "flashcardRotation"
     )
 
-    Card(
-        modifier = modifier
-            .shadow(8.dp, RoundedCornerShape(16.dp))
-            .graphicsLayer {
-                // 2. Use our "rotation" state variable here
-                this.rotationY = rotation
-                cameraDistance = 12 * density
-            },
-        shape = RoundedCornerShape(16.dp),
-        onClick = { isFlipped = !isFlipped },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
-    ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf<Color>(
-                        flashcard_gradient_start,
-                        flashcard_gradient_end
-                    )
-                )
-            )
-        ) {
-            // 3. Use our "rotation" state variable for the check
-            if (rotation <= 90f) {
-                FlashcardFront(vocabularyWord)
-            } else {
-                // 4. This line now works, because there is no conflict.
-                // It correctly sets the rotationY property of this specific graphicsLayer.
-                Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
-                    FlashcardBack(vocabularyWord)
-                }
-            }
+    LaunchedEffect(Unit) {
+        try {
+            val bytes = Res.readBytes("drawable/branch_top_left.svg")
+            println("Loaded SVG bytes: ${bytes.size}")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
-            Box(
+
+
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background SVG decorations
+        Box(Modifier.fillMaxSize()) {
+            KamelImage(
+                resource = asyncPainterResource("resource:drawable/cute_girl.png"),
+                contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.TopEnd
-            ) {
-                IconButton(onClick = onDeleteClick) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete word",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                    .padding(16.dp)
+                    .align(Alignment.TopStart)
+            )
+            KamelImage(
+                resource = asyncPainterResource("file:///path/to/image.png"),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd)
+            )
+        }
+
+        // The Flipping Card
+        Card(
+            modifier = modifier
+                .fillMaxWidth(0.8f)
+                .aspectRatio(0.7f)
+                .shadow(8.dp, RoundedCornerShape(16.dp))
+                .graphicsLayer {
+                    this.rotationY = rotation
+                    cameraDistance = 12 * density
+                },
+            shape = RoundedCornerShape(16.dp),
+            onClick = { isFlipped = !isFlipped },
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (rotation <= 90f) {
+                    FlashcardFront(vocabularyWord, onDeleteClick)
+                } else {
+                    Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
+                        FlashcardBack(vocabularyWord, onDeleteClick)
+                    }
                 }
             }
         }
     }
 }
 @Composable
-fun FlashcardFront(vocabularyWord: VocabularyWord) {
+fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
     val (word, phonetic) = remember(vocabularyWord.word) {
-        val match = Regex("(.+?) \\((.+?)\\)").find(vocabularyWord.word)
+        val match = Regex("(.+?) /(.+?)/").find(vocabularyWord.word)
         if (match != null && match.groupValues.size == 3) {
-            match.groupValues[1] to match.groupValues[2]
+            match.groupValues[1].trim() to "/${match.groupValues[2]}/"
         } else {
             vocabularyWord.word to null
         }
     }
 
     val (partOfSpeech, definition) = remember(vocabularyWord.explanation) {
-        val match = Regex("\\((.*?)\\) (.*)").find(vocabularyWord.explanation)
+        val match = Regex("\\((.*?)\\)\\s+(.*)").find(vocabularyWord.explanation)
         if (match != null && match.groupValues.size == 3) {
             match.groupValues[1] to match.groupValues[2]
         } else {
@@ -129,58 +133,116 @@ fun FlashcardFront(vocabularyWord: VocabularyWord) {
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = word,
-            style = MaterialTheme.typography.headlineLarge
-        )
-        phonetic?.let {
-            Spacer(modifier = Modifier.height(8.dp))
+        // Main content area
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
-                text = it,
-                style = MaterialTheme.typography.bodyMedium,
-                fontStyle = FontStyle.Italic
+                text = word,
+                style = MaterialTheme.typography.displaySmall,
+                fontFamily = FontFamily.Serif
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                phonetic?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                partOfSpeech?.let {
+                    Text(
+                        text = "($it)",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontStyle = FontStyle.Italic,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Divider(modifier = Modifier.fillMaxWidth(0.5f))
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = definition,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        partOfSpeech?.let {
-            Text(
-                text = it,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+
+        // Action bar at the bottom
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete word",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
-        Text(
-            text = definition,
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }
 
 @Composable
-fun FlashcardBack(vocabularyWord: VocabularyWord) {
+fun FlashcardBack(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = vocabularyWord.persianEquivalent,
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Example:",
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "\"${vocabularyWord.example}\"",
-            style = MaterialTheme.typography.bodyLarge,
-            fontStyle = FontStyle.Italic
-        )
+        // Main content area
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = vocabularyWord.persianEquivalent,
+                style = MaterialTheme.typography.displaySmall,
+                fontFamily = FontFamily.Serif
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Divider(modifier = Modifier.fillMaxWidth(0.5f))
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = "Example:",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "\"${vocabularyWord.example}\"",
+                style = MaterialTheme.typography.bodyLarge,
+                fontStyle = FontStyle.Italic,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+        }
+
+        // Action bar at the bottom
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete word",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        }
     }
 }

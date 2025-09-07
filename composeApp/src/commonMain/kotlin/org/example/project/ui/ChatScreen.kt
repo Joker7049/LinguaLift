@@ -1,5 +1,6 @@
 package org.example.project.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,13 +11,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.example.project.data.ChatMessage
 import org.example.project.data.ChatViewModel
+import org.example.project.ui.common.StandardTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatViewModel
 ) {
@@ -26,51 +32,73 @@ fun ChatScreen(
 
     var text by remember { mutableStateOf("") }
 
-    // This effect will run when the user leaves the screen
     DisposableEffect(Unit) {
         onDispose {
             viewModel.summarizeAndSaveMemory()
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.secondaryContainer
+                    )
+                )
+            )
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            reverseLayout = true
-        ) {
-            items(uiState.messages.reversed()) { message ->
-                MessageBubble(message = message)
-            }
-        }
-
-        ChatInputBar(
-            text = text,
-            onTextChanged = { newText -> text = newText },
-            onSendClick = {
-                if (text.isNotBlank()) {
-                    viewModel.sendMessage(text)
-                    text = "" // Clear the text field
-                    // Scroll to the bottom after sending
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(0)
+        Scaffold(
+            topBar = {
+                StandardTopAppBar(
+                    title = "Tutor Chat",
+                    onBackClick = onBackClick
+                )
+            },
+            containerColor = Color.Transparent
+        ) { paddingValues ->
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    reverseLayout = true
+                ) {
+                    items(uiState.messages.reversed()) { message ->
+                        MessageBubble(message = message)
                     }
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+
+                ChatInputBar(
+                    text = text,
+                    onTextChanged = { newText -> text = newText },
+                    onSendClick = {
+                        if (text.isNotBlank()) {
+                            viewModel.sendMessage(text)
+                            text = "" // Clear the text field
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                )
+            }
+        }
     }
 }
 
-// MessageBubble and ChatInputBar composables remain the same
-
 @Composable
-fun MessageBubble(message: ChatMessage, modifier: Modifier = Modifier) { 
+fun MessageBubble(
+    message: ChatMessage,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()

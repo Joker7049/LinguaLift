@@ -3,20 +3,16 @@ package org.example.project
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +30,6 @@ import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import org.example.project.data.ChatViewModel
 import org.example.project.database.getDatabase
-import org.example.project.database.AiMemoryQueries
 import org.example.project.navigation.Screen
 import org.example.project.quiz.QuizViewModel
 import org.example.project.ui.ChatScreen
@@ -49,24 +44,26 @@ import org.example.project.ui.VocabularyBuilderScreen
 @Composable
 @Preview
 fun App() {
+
     AppTheme {
         val navController = rememberNavController()
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
         val vocabularyQueries = getDatabase().vocabularyQueries
+        val aiMemoryQueries = getDatabase().aiMemoryQueries
         val vocabularyViewModel = remember { VocabularyViewModel(vocabularyQueries) }
         val quizViewModel = remember { QuizViewModel(vocabularyQueries) }
-        val chatViewModel = remember { ChatViewModel(vocabularyQueries, getDatabase().aiMemoryQueries) }
+        val chatViewModel = remember { ChatViewModel(vocabularyQueries, aiMemoryQueries) }
 
         val screens = listOf(
             Screen.HomeScreen,
-            Screen.SimplificationScreen,
-            Screen.FixMyEnglishScreen,
+            Screen.ChatScreen,
             Screen.VocabularyBuilderScreen,
             Screen.SavedWordsScreen,
             Screen.QuizScreen,
-            Screen.ChatScreen
+            Screen.SimplificationScreen,
+            Screen.FixMyEnglishScreen
         )
         var selectedScreen by remember { mutableStateOf(screens[0]) }
 
@@ -95,65 +92,61 @@ fun App() {
                             onClick = {
                                 selectedScreen = screen
                                 scope.launch { drawerState.close() }
-                                navController.navigate(screen.route)
+                                if (screen.route == Screen.HomeScreen.route) {
+                                    navController.popBackStack(Screen.HomeScreen.route, false)
+                                } else {
+                                    navController.navigate(screen.route)
+                                }
                             }
                         )
                     }
                 }
             }
         ){
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { Text("LinguaLift") },
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                scope.launch {
-                                    drawerState.apply {
-                                        if (isClosed) open() else close()
-                                    }
-                                }
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Menu"
-                                )
-                            }
+            NavHost(
+                navController = navController,
+                startDestination = Screen.HomeScreen.route,
+            ) {
+                composable(Screen.HomeScreen.route) {
+                    HomeScreen(
+                        drawerState = drawerState,
+                        onScreenSelected = { screen ->
+                            navController.navigate(screen.route)
                         }
                     )
                 }
-            ){ paddingValues ->
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.HomeScreen.route,
-                    modifier = Modifier.padding(paddingValues)
-                ) {
-                    composable(Screen.HomeScreen.route) {
-                        HomeScreen()
-                    }
-                    composable(Screen.SimplificationScreen.route) {
-                        SimplificationScreen()
-                    }
-                    composable(Screen.FixMyEnglishScreen.route) {
-                        FixMyEnglishScreen()
-                    }
-                    composable(Screen.VocabularyBuilderScreen.route){
-                        VocabularyBuilderScreen(viewModel = vocabularyViewModel)
-                    }
-                    composable(Screen.SavedWordsScreen.route) {
-                        SavedWordsScreen(viewModel = vocabularyViewModel)
-                    }
-                    composable(Screen.QuizScreen.route) {
-                        QuizScreen(viewModel = quizViewModel)
-                    }
-                    composable(Screen.ChatScreen.route) {
-                        ChatScreen(viewModel = chatViewModel)
-                    }
+                composable(Screen.SimplificationScreen.route) {
+                    SimplificationScreen(onBackClick = { navController.popBackStack() })
                 }
-
-
+                composable(Screen.FixMyEnglishScreen.route) {
+                    FixMyEnglishScreen(onBackClick = { navController.popBackStack() })
+                }
+                composable(Screen.VocabularyBuilderScreen.route){
+                    VocabularyBuilderScreen(
+                        onBackClick = { navController.popBackStack() },
+                        viewModel = vocabularyViewModel
+                    )
+                }
+                composable(Screen.SavedWordsScreen.route) {
+                    SavedWordsScreen(
+                        onBackClick = { navController.popBackStack() },
+                        viewModel = vocabularyViewModel
+                    )
+                }
+                composable(Screen.QuizScreen.route) {
+                    QuizScreen(
+                        onBackClick = { navController.popBackStack() },
+                        viewModel = quizViewModel
+                    )
+                }
+                composable(Screen.ChatScreen.route) {
+                    ChatScreen(
+                        onBackClick = { navController.popBackStack() },
+                        viewModel = chatViewModel
+                    )
+                }
             }
-
         }
+
     }
 }
