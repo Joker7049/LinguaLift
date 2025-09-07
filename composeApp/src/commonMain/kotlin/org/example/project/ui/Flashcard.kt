@@ -21,13 +21,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.kamel.core.config.KamelConfig
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import io.kamel.image.config.svgDecoder
 import kotlinx.coroutines.launch
 import lingualift.composeapp.generated.resources.Res
-import lingualift.composeapp.generated.resources.branch_top_left
 import org.example.project.VocabularyWord
 import org.example.project.ui.theme.flashcard_gradient_end
 import org.example.project.ui.theme.flashcard_gradient_start
@@ -49,38 +46,18 @@ fun Flashcard(
         label = "flashcardRotation"
     )
 
-    LaunchedEffect(Unit) {
-        try {
-            val bytes = Res.readBytes("drawable/branch_top_left.svg")
-            println("Loaded SVG bytes: ${bytes.size}")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-
-
-
     Box(modifier = Modifier.fillMaxSize()) {
         // Background SVG decorations
-        Box(Modifier.fillMaxSize()) {
-            KamelImage(
-                resource = asyncPainterResource("resource:drawable/cute_girl.png"),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .align(Alignment.TopStart)
-            )
-            KamelImage(
-                resource = asyncPainterResource("file:///path/to/image.png"),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .align(Alignment.BottomEnd)
-            )
-        }
+        KamelImage(
+            resource = asyncPainterResource(data = "drawable/branch_top_left.svg"),
+            contentDescription = null,
+            modifier = Modifier.align(Alignment.TopStart)
+        )
+        KamelImage(
+            resource = asyncPainterResource(data = "drawable/branch_bottom_right.svg"),
+            contentDescription = null,
+            modifier = Modifier.align(Alignment.BottomEnd)
+        )
 
         // The Flipping Card
         Card(

@@ -6,9 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import io.kamel.core.config.KamelConfig
-import io.kamel.core.config.takeFrom
-import io.kamel.image.config.Default
 import org.example.project.database.DatabaseDriverFactory
 import org.example.project.database.createDatabase
 
@@ -19,11 +16,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-
-
-
         setContent {
-            App()
+            KamelProvider {
+                App()
+            }
         }
     }
 }

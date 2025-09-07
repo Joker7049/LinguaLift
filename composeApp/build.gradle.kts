@@ -60,6 +60,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.haze.materials)
             implementation(libs.kamel.image.default)
+            implementation(libs.kamel.svg)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

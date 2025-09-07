@@ -45,6 +45,7 @@ sqlDelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.
 sqlDelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 kamel-image-default = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
+kamel-svg = { module = "media.kamel:kamel-svg", version.ref = "kamel" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
