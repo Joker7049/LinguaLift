@@ -42,6 +42,8 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqlDelight.android.driver)
+
+
         }
         commonMain.dependencies {
             implementation(libs.sqlDelight.runtime)
@@ -59,8 +61,7 @@ kotlin {
             implementation(libs.generativeai.google)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.haze.materials)
-            implementation(libs.kamel.image.default)
-            implementation(libs.kamel.svg)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -69,6 +70,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.sqlDelight.jvm.driver)
+
         }
         iosMain.dependencies {
             implementation(libs.sqlDelight.native.driver)

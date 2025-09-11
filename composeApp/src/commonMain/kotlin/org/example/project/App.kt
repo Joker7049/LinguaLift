@@ -15,6 +15,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import io.kamel.core.config.KamelConfig
+import io.kamel.image.config.LocalKamelConfig
+import io.kamel.image.config.svgDecoder
 import kotlinx.coroutines.launch
 import org.example.project.data.ChatViewModel
 import org.example.project.database.getDatabase
@@ -44,7 +48,6 @@ import org.example.project.ui.VocabularyBuilderScreen
 @Composable
 @Preview
 fun App() {
-
     AppTheme {
         val navController = rememberNavController()
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -149,4 +152,5 @@ fun App() {
         }
 
     }
+
 }

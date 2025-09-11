@@ -20,7 +20,7 @@ navigationCompose = "2.9.0-beta05"
 kotlinx-serialization = "1.9.0"
 sqlDelight = "2.1.0"
 haze = "1.6.10"
-kamel = "1.0.7"
+
 
 [libraries]
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
@@ -44,8 +44,6 @@ sqlDelight-android-driver = { module = "app.cash.sqldelight:android-driver", ver
 sqlDelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 sqlDelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
-kamel-image-default = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
-kamel-svg = { module = "media.kamel:kamel-svg", version.ref = "kamel" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

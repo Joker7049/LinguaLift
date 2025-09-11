@@ -2,8 +2,6 @@ package org.example.project.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,21 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import kotlinx.coroutines.launch
 import lingualift.composeapp.generated.resources.Res
+import lingualift.composeapp.generated.resources.Res.getUri
+import lingualift.composeapp.generated.resources.branch_bottom_left
+import lingualift.composeapp.generated.resources.branch_top_right
 import org.example.project.VocabularyWord
-import org.example.project.ui.theme.flashcard_gradient_end
-import org.example.project.ui.theme.flashcard_gradient_start
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -39,45 +35,60 @@ fun Flashcard(
     modifier: Modifier = Modifier
 ) {
     var isFlipped by remember { mutableStateOf(false) }
-
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
         animationSpec = tween(durationMillis = 500),
         label = "flashcardRotation"
     )
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Background SVG decorations
+    Box(modifier.fillMaxSize()) {
+        /* ---------- top-left branch ---------- */
         KamelImage(
-            resource = asyncPainterResource(data = "drawable/branch_top_left.svg"),
+            resource = { asyncPainterResource("resource:drawable/branch_bottom_left.svg") },
             contentDescription = null,
-            modifier = Modifier.align(Alignment.TopStart)
-        )
-        KamelImage(
-            resource = asyncPainterResource(data = "drawable/branch_bottom_right.svg"),
-            contentDescription = null,
-            modifier = Modifier.align(Alignment.BottomEnd)
+            onLoading = { Box(Modifier.size(80.dp)) },   // placeholder
+            onFailure = { error ->                      // <-- will print the reason
+                println("Kamel top-right failed: ${error.message}")
+            },
+            modifier = Modifier
+                .size(80.dp)
+                .padding(16.dp)
+                .align(Alignment.TopStart)
         )
 
-        // The Flipping Card
+        /* ---------- bottom-right branch ---------- */
+        KamelImage(
+            resource = { asyncPainterResource("resource:drawable/branch_top_right.svg") },
+            contentDescription = null,
+            onLoading = { Box(Modifier.size(80.dp)) },
+            onFailure = { error ->
+                println("Kamel bottom-left failed: ${error.message}")
+            },
+            modifier = Modifier
+                .size(80.dp)
+                .padding(16.dp)
+                .align(Alignment.BottomEnd)
+        )
+
+        /* ---------- flipping card (unchanged) ---------- */
         Card(
             modifier = modifier
                 .fillMaxWidth(0.8f)
                 .aspectRatio(0.7f)
                 .shadow(8.dp, RoundedCornerShape(16.dp))
                 .graphicsLayer {
-                    this.rotationY = rotation
+                    rotationY = rotation
                     cameraDistance = 12 * density
                 },
             shape = RoundedCornerShape(16.dp),
             onClick = { isFlipped = !isFlipped },
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize()) {
                 if (rotation <= 90f) {
                     FlashcardFront(vocabularyWord, onDeleteClick)
                 } else {
-                    Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
+                    Box(Modifier.graphicsLayer { rotationY = 180f }) {
                         FlashcardBack(vocabularyWord, onDeleteClick)
                     }
                 }
@@ -85,6 +96,7 @@ fun Flashcard(
         }
     }
 }
+
 @Composable
 fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
     val (word, phonetic) = remember(vocabularyWord.word) {
@@ -223,3 +235,10 @@ fun FlashcardBack(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
         }
     }
 }
+
+
+
+@Composable
+private fun branchTopRight()  = painterResource(Res.drawable.branch_top_right)
+@Composable
+private fun branchBottomLeft()= painterResource(Res.drawable.branch_bottom_left)
