@@ -13,8 +13,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "LinguaLift",
     ) {
-        KamelProvider {
-            App()
-        }
+        App()
     }
 }

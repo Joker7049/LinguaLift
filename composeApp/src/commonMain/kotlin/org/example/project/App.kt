@@ -28,9 +28,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
-import io.kamel.core.config.KamelConfig
-import io.kamel.image.config.LocalKamelConfig
-import io.kamel.image.config.svgDecoder
 import kotlinx.coroutines.launch
 import org.example.project.data.ChatViewModel
 import org.example.project.database.getDatabase

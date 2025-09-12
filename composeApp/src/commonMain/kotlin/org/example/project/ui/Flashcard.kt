@@ -10,22 +10,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
-import lingualift.composeapp.generated.resources.Res
-import lingualift.composeapp.generated.resources.Res.getUri
-import lingualift.composeapp.generated.resources.branch_bottom_left
-import lingualift.composeapp.generated.resources.branch_top_right
 import org.example.project.VocabularyWord
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+
+
+
+
+
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
@@ -41,61 +40,31 @@ fun Flashcard(
         label = "flashcardRotation"
     )
 
-    Box(modifier.fillMaxSize()) {
-        /* ---------- top-left branch ---------- */
-        KamelImage(
-            resource = { asyncPainterResource("resource:drawable/branch_bottom_left.svg") },
-            contentDescription = null,
-            onLoading = { Box(Modifier.size(80.dp)) },   // placeholder
-            onFailure = { error ->                      // <-- will print the reason
-                println("Kamel top-right failed: ${error.message}")
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .aspectRatio(0.7f)
+            .graphicsLayer {
+                rotationY = rotation
+                cameraDistance = 12 * density
             },
-            modifier = Modifier
-                .size(80.dp)
-                .padding(16.dp)
-                .align(Alignment.TopStart)
-        )
-
-        /* ---------- bottom-right branch ---------- */
-        KamelImage(
-            resource = { asyncPainterResource("resource:drawable/branch_top_right.svg") },
-            contentDescription = null,
-            onLoading = { Box(Modifier.size(80.dp)) },
-            onFailure = { error ->
-                println("Kamel bottom-left failed: ${error.message}")
-            },
-            modifier = Modifier
-                .size(80.dp)
-                .padding(16.dp)
-                .align(Alignment.BottomEnd)
-        )
-
-        /* ---------- flipping card (unchanged) ---------- */
-        Card(
-            modifier = modifier
-                .fillMaxWidth(0.8f)
-                .aspectRatio(0.7f)
-                .shadow(8.dp, RoundedCornerShape(16.dp))
-                .graphicsLayer {
-                    rotationY = rotation
-                    cameraDistance = 12 * density
-                },
-            shape = RoundedCornerShape(16.dp),
-            onClick = { isFlipped = !isFlipped },
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-        ) {
-            Box(Modifier.fillMaxSize()) {
-                if (rotation <= 90f) {
-                    FlashcardFront(vocabularyWord, onDeleteClick)
-                } else {
-                    Box(Modifier.graphicsLayer { rotationY = 180f }) {
-                        FlashcardBack(vocabularyWord, onDeleteClick)
-                    }
+        shape = RoundedCornerShape(16.dp),
+        onClick = { isFlipped = !isFlipped },
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Box(Modifier.fillMaxSize()) {
+            if (rotation <= 90f) {
+                FlashcardFront(vocabularyWord, onDeleteClick)
+            } else {
+                Box(Modifier.graphicsLayer { rotationY = 180f }) {
+                    FlashcardBack(vocabularyWord, onDeleteClick)
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
@@ -235,10 +204,3 @@ fun FlashcardBack(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
         }
     }
 }
-
-
-
-@Composable
-private fun branchTopRight()  = painterResource(Res.drawable.branch_top_right)
-@Composable
-private fun branchBottomLeft()= painterResource(Res.drawable.branch_bottom_left)

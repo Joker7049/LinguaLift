@@ -17,9 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            KamelProvider {
-                App()
-            }
+            App()
         }
     }
 }
