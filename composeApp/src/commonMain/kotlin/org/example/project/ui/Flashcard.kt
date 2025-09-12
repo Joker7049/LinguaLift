@@ -19,11 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.VocabularyWord
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-
-
-
-
-
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
+import org.example.project.ui.common.LocalImage
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
@@ -98,6 +96,13 @@ fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            vocabularyWord.imagePath?.let { path ->
+                LocalImage(
+                    path = path,
+                    contentDescription = "Image for ${vocabularyWord.word}",
+                    modifier = Modifier.size(120.dp).padding(bottom = 16.dp)
+                )
+            }
             Text(
                 text = word,
                 style = MaterialTheme.typography.displaySmall,

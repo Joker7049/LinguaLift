@@ -3,15 +3,16 @@ CREATE TABLE vocabulary (
     word TEXT NOT NULL,
     explanation TEXT NOT NULL,
     persianEquivalent TEXT NOT NULL,
-    example TEXT NOT NULL
+    example TEXT NOT NULL,
+    imagePath TEXT
 );
 
 
 -- === Vocabulary Queries ===
 
 insertWord:
-INSERT INTO vocabulary (word, explanation, persianEquivalent, example)
-VALUES (?, ?, ?, ?);
+INSERT INTO vocabulary (word, explanation, persianEquivalent, example, imagePath)
+VALUES (?, ?, ?, ?, ?);
 
 getAllWords:
 SELECT * FROM vocabulary;

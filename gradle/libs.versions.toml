@@ -20,6 +20,8 @@ navigationCompose = "2.9.0-beta05"
 kotlinx-serialization = "1.9.0"
 sqlDelight = "2.1.0"
 haze = "1.6.10"
+ktor = "3.3.0"
+kamel = "1.0.7"
 
 
 [libraries]
@@ -44,6 +46,14 @@ sqlDelight-android-driver = { module = "app.cash.sqldelight:android-driver", ver
 sqlDelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 sqlDelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+kamel-image = { module = "media.kamel:kamel-image-default", version.ref = "kamel" }
+
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

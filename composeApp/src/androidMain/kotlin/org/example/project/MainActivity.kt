@@ -8,10 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import org.example.project.database.DatabaseDriverFactory
 import org.example.project.database.createDatabase
+import org.example.project.util.AndroidContext
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidContext.instance = this
         createDatabase(DatabaseDriverFactory(this))
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
