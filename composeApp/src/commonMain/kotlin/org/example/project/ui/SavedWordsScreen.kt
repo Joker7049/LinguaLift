@@ -74,14 +74,16 @@ fun SavedWordsScreen(
             } else {
                 val pagerState = rememberPagerState(pageCount = { savedWords.size })
                 HorizontalPager(
-                    state = pagerState, modifier = Modifier.fillMaxSize().padding(paddingValues)
+                    state = pagerState, modifier = Modifier.fillMaxSize().padding(paddingValues),
                 ) { page ->
                     Flashcard(
                         vocabularyWord = savedWords[page], onDeleteClick = {
                             savedWords[page].id?.let { id ->
                                 viewModel.deleteWord(id)
                             }
-                        }, modifier = Modifier
+                        },
+                        modifier = Modifier.padding(16.dp),
+                        viewModel = viewModel
                     )
                 }
             }

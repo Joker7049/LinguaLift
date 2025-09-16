@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,11 +18,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
+import org.example.project.VocabularyViewModel
 import org.example.project.VocabularyWord
+import org.example.project.ui.common.ImagePicker
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import org.example.project.ui.common.LocalImage
+import org.example.project.util.copyImageToInternalStorage
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
@@ -29,8 +33,10 @@ import org.example.project.ui.common.LocalImage
 fun Flashcard(
     vocabularyWord: VocabularyWord,
     onDeleteClick: () -> Unit,
+    viewModel: VocabularyViewModel, // Add this
     modifier: Modifier = Modifier
-) {
+)
+{
     var isFlipped by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
@@ -39,11 +45,9 @@ fun Flashcard(
     )
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .aspectRatio(0.7f)
-            .graphicsLayer {
+        modifier = modifier
+            .fillMaxSize()
+            .graphicsLayer{
                 rotationY = rotation
                 cameraDistance = 12 * density
             },
@@ -53,7 +57,7 @@ fun Flashcard(
     ) {
         Box(Modifier.fillMaxSize()) {
             if (rotation <= 90f) {
-                FlashcardFront(vocabularyWord, onDeleteClick)
+                FlashcardFront(vocabularyWord, viewModel, onDeleteClick)
             } else {
                 Box(Modifier.graphicsLayer { rotationY = 180f }) {
                     FlashcardBack(vocabularyWord, onDeleteClick)
@@ -65,7 +69,11 @@ fun Flashcard(
 
 
 @Composable
-fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
+fun FlashcardFront(
+    vocabularyWord: VocabularyWord,
+    viewModel: VocabularyViewModel,
+    onDeleteClick: () -> Unit
+) {
     val (word, phonetic) = remember(vocabularyWord.word) {
         val match = Regex("(.+?) /(.+?)/").find(vocabularyWord.word)
         if (match != null && match.groupValues.size == 3) {
@@ -83,6 +91,26 @@ fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
             null to vocabularyWord.explanation
         }
     }
+    var showImagePicker by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    ImagePicker(
+        show = showImagePicker,
+        onImageSelected = {
+            showImagePicker = false
+            it?.let { uriString ->
+                vocabularyWord.id?.let { id ->
+                    scope.launch {
+                        val localPath = copyImageToInternalStorage(uriString, vocabularyWord.word)
+                        println("[ViewModel] Local path: $localPath")
+                        if (localPath != null) {
+                            viewModel.updateWordImagePath(id, localPath)
+                        }
+                    }
+                }
+            }
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -100,7 +128,7 @@ fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
                 LocalImage(
                     path = path,
                     contentDescription = "Image for ${vocabularyWord.word}",
-                    modifier = Modifier.size(120.dp).padding(bottom = 16.dp)
+                    modifier = Modifier.size(240.dp).padding(bottom = 16.dp)
                 )
             }
             Text(
@@ -146,6 +174,12 @@ fun FlashcardFront(vocabularyWord: VocabularyWord, onDeleteClick: () -> Unit) {
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(onClick = { showImagePicker = true }) {
+                Icon(
+                    imageVector = Icons.Default.AddPhotoAlternate,
+                    contentDescription = "Upload Image"
+                )
+            }
             IconButton(onClick = onDeleteClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,

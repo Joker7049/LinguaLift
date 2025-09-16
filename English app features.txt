@@ -59,10 +59,10 @@ Here are some **fresh, not-so-common AI-powered features** you could implement:
    * If you always mess up past tense, AI keeps bringing small practice into daily chats.
    * Makes learning feel “tailored” instead of random.
 
-8. **AI-Generated Flashcard Imagery**
+8. **User-Uploaded Flashcard Imagery**
 
-   * For each saved vocabulary word, call an image generation AI to create a relevant, memorable image.
-   * Display this image on the flashcard to create a strong visual connection to the word.
+   * Allow the user to select and upload their own image for each saved vocabulary word.
+   * Display this image on the flashcard to create a strong, personal visual connection to the word.
 
 ---
 

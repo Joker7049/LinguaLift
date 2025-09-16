@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,9 +17,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.example.project.database.Vocabulary
-import org.example.project.util.saveImageFromUrl
 
-@Serializable
+
+@kotlinx.serialization.Serializable
 data class VocabularyWord(
     val id: Long? = null,
     val word: String = "",
@@ -40,7 +39,7 @@ data class VocabularyUiState(
 
 class VocabularyViewModel(private val vocabularyQueries: VocabularyQueries) : ViewModel() {
 
-    val savedWords: StateFlow<List<VocabularyWord>> = 
+    val savedWords: StateFlow<List<VocabularyWord>> =
         vocabularyQueries.getAllWords()
             .asFlow()
             .mapToList(Dispatchers.Default)
@@ -71,8 +70,6 @@ class VocabularyViewModel(private val vocabularyQueries: VocabularyQueries) : Vi
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.0-flash", apiKey = getGeminiApiKey()
     )
-
-    private val httpClient = HttpClient()
 
     fun onTextChange(text: String) {
         _uiState.value = _uiState.value.copy(textToExtract = text)
@@ -109,45 +106,28 @@ class VocabularyViewModel(private val vocabularyQueries: VocabularyQueries) : Vi
 
     fun saveWord(word: VocabularyWord) {
         viewModelScope.launch(Dispatchers.Default) {
-            val localImagePath = generateAndSaveImage(word.word)
-            println("[ViewModel] Attempting to save word: ${word.word} with image path: $localImagePath")
-
+            println("[ViewModel] Attempting to save word: ${word.word}")
             vocabularyQueries.insertWord(
                 word = word.word,
                 explanation = word.explanation,
                 persianEquivalent = word.persianEquivalent,
                 example = word.example,
-                imagePath = localImagePath
+                imagePath = null // We'll update this later
             )
             println("[ViewModel] Finished saving word: ${word.word}")
-        }
-    }
-
-    private suspend fun generateAndSaveImage(word: String): String? {
-        return try {
-            val imageGenModel = GenerativeModel(
-                modelName = "imagen-4.0-generate-001",
-                apiKey = getGeminiApiKey()
-            )
-            val imagePrompt = "A simple, memorable, and cute illustration representing the word \"$word\". Minimalist, vector art, on a clean white background."
-            val imageUrl = imageGenModel.generateContent(imagePrompt).text
-
-            if (imageUrl.isNullOrBlank()) {
-                println("[ViewModel] Failed to generate image URL for '$word'")
-                return null
-            }
-            
-            println("[ViewModel] Generated image URL for '$word': $imageUrl")
-            saveImageFromUrl(httpClient, imageUrl, word)
-        } catch (e: Exception) {
-            println("[ViewModel] Image generation/saving failed for '$word': ${e.message}")
-            null
         }
     }
 
     fun deleteWord(id: Long) {
         viewModelScope.launch(Dispatchers.Default) {
             vocabularyQueries.deleteWordById(id)
+        }
+    }
+
+    fun updateWordImagePath(id: Long, path: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            println("[ViewModel] Updating image path for word ID $id to: $path")
+            vocabularyQueries.updateImagePath(path, id)
         }
     }
 }

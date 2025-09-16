@@ -42,7 +42,6 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqlDelight.android.driver)
-            implementation(libs.ktor.client.okhttp)
 
 
         }
@@ -63,9 +62,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.haze.materials)
             implementation(libs.kamel.image)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
+
 
         }
         commonTest.dependencies {
@@ -75,12 +72,10 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.sqlDelight.jvm.driver)
-            implementation(libs.ktor.client.okhttp)
 
         }
         iosMain.dependencies {
             implementation(libs.sqlDelight.native.driver)
-            implementation(libs.ktor.client.darwin)
         }
     }
 }

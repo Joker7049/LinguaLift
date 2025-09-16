@@ -24,4 +24,5 @@ DELETE FROM vocabulary WHERE id = ?;
 getRandomWords:
 SELECT * FROM vocabulary ORDER BY RANDOM() LIMIT 10;
 
-
+updateImagePath:
+UPDATE vocabulary SET imagePath = ? WHERE id = ?;
